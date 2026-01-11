@@ -6,6 +6,7 @@ import (
 	"time"
 	"slices"
 	"maps"
+	"unicode/utf8"
 )
 
 const s string = "constant"
@@ -356,6 +357,89 @@ func recursion() {
 	fmt.Println(fib(7))
 }
 
+func rangeOverBuiltInTypes() {
+	nums := []int{2, 3, 4}
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	fmt.Println("sum:", sum)
+
+	for i, num := range nums {
+		if num == 3 {
+			fmt.Println("index:", i)
+		}
+	}
+	
+	kvs := map[string]string{"a":"apple","b":"banana"}
+	for k, v := range kvs {
+		fmt.Println("%s -> %s\n", k, v)
+	}
+	
+	for k := range kvs {
+		fmt.Println("key:", k)
+	}
+	
+	for i, c := range "go" {
+		fmt.Println(i, c)
+	}
+}
+
+func zeroval(ival int) {
+	ival = 0
+}
+
+func zeroptr(iptr *int) {
+	*iptr = 0
+}
+
+func pointers() {
+	i := 1
+	fmt.Println("initial:", i)
+	
+	zeroval(i)
+	fmt.Println("zeroval:", i)
+
+	zeroptr(&i)
+	fmt.Println("zeroptr:", i)
+
+	fmt.Println("pointer:", &i)
+}
+
+func stringsAndRunes() {
+	const s = "สวัสดี"
+
+	fmt.Println("Len:", len(s))
+
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("%x ", s[i])
+	}
+	fmt.Println()
+
+	fmt.Println("Rune count:", utf8.RuneCountInString(s))
+	
+	for idx, runeValue := range s {
+		fmt.Printf("%#u starts at %d\n", runeValue, idx)
+	}
+	fmt.Println("\nUsing DecodeRuneInString")
+	
+	for i, w := 0, 0; i < len(s); i += w {
+		runeValue, width := utf8.DecodeRuneInString(s[i:])
+		fmt.Printf("%#U starts at %d\n", runeValue, i)
+		w = width
+	
+		examineRune(runeValue)
+	}
+}
+
+func examineRune(r rune) {
+	if r == 't' {
+		fmt.Println("found tee")
+	} else if r == 'ส' {
+		fmt.Println("found so sua")
+	}
+}
+
 func main() {
 	helloWorld()
 	values()
@@ -372,4 +456,7 @@ func main() {
 	variadicFunctions()
 	closures()
 	recursion()
+	rangeOverBuiltInTypes()
+	pointers()
+	stringsAndRunes()
 }
