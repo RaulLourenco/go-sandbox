@@ -504,6 +504,134 @@ func methods() {
 	fmt.Println("perim: ", rp.perim())
 }
 
+type geometry interface {
+	area() float64
+	perim() float64
+}
+
+type rectangle struct {
+	width, height float64
+}
+
+type circle struct {
+	radius float64
+}
+
+func (r rectangle) area() float64 {
+	return r.height * r.width
+}
+
+func (r rectangle) perim() float64 {
+	return 2*r.height + 2*r.width
+}
+
+func (c circle) area() float64 {
+	return math.Pi * c.radius * c.radius
+}
+
+func (c circle) perim() float64 {
+	return 2 * math.Pi * c.radius
+}
+
+func measure(g geometry) {
+	fmt.Println(g)
+	fmt.Println(g.area())
+	fmt.Println(g.perim())
+}
+
+func detectCircle(g geometry) {
+	if c, ok := g.(circle); ok {
+		fmt.Println("circle with radius", c.radius)
+	}
+}
+
+func interfaces() {
+	r := rectangle{width: 3, height: 4}
+	c := circle{radius: 5}
+	
+	measure(r)
+	measure(c)
+	
+	detectCircle(r)
+	detectCircle(c)
+}
+
+type ServerState int
+
+const (
+	StateIdle ServerState = iota
+	StateConnected
+	StateError
+	StateRetrying
+)
+
+var stateName = map[ServerState]string{
+	StateIdle: 	"idle",
+	StateConnected: "connected",
+	StateError:	"error",
+	StateRetrying:	"retrying",
+}
+
+func (ss ServerState) String() string {
+	return stateName[ss]
+}
+
+func enums() {
+	ns := transition(StateIdle)
+	fmt.Println(ns)
+
+	ns2 := transition(ns)
+	fmt.Println(ns2)
+}
+
+func transition(s ServerState) ServerState {
+	switch s {
+	case StateIdle:
+		return StateConnected
+	case StateConnected, StateRetrying:
+		return StateIdle
+	case StateError:
+		return StateError
+	default:
+		panic(fmt.Errorf("unknown state: %s", s))
+	}
+}
+
+type base struct {
+	num int
+}
+
+func (b base) describe() string {
+	return fmt.Sprintf("base with num=%v", b.num)
+}
+
+type container struct {
+	base
+	str string
+}
+
+func structEmbedding() {
+	co := container{
+		base: base{
+			num: 1,
+		},
+		str: "some name",
+	}
+
+	fmt.Printf("co={num: %v, str: %v}\n", co.num, co.str)
+	
+	fmt.Println("also num:", co.base.num)
+
+	fmt.Println("describe:", co.describe())
+
+	type describer interface {
+		describe() string
+	}
+
+	var d describer = co
+	fmt.Println("describer:", d.describe())
+}
+
 func main() {
 	helloWorld()
 	values()
@@ -525,4 +653,7 @@ func main() {
 	stringsAndRunes()
 	structs()
 	methods()
+	interfaces()
+	enums()
+	structEmbedding()
 }
