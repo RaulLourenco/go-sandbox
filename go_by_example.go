@@ -817,6 +817,15 @@ func goroutines() {
 	fmt.Println("done")
 }
 
+func channels() {
+	messages := make(chan string)
+
+	go func() { messages <- "ping" }()
+	
+	msg := <-messages
+	fmt.Println(msg)
+}
+
 func main() {
 	helloWorld()
 	values()
@@ -846,4 +855,5 @@ func main() {
 	errorsFunc()
 	customErrors()
 	goroutines()
+	channels()
 }
