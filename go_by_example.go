@@ -826,6 +826,16 @@ func channels() {
 	fmt.Println(msg)
 }
 
+func channelBuffering() {
+	messages := make(chan string, 2)
+
+	messages <- "buffered"
+	messages <- "channel"
+
+	fmt.Println(<-messages)
+	fmt.Println(<-messages)
+}
+
 func main() {
 	helloWorld()
 	values()
@@ -856,4 +866,5 @@ func main() {
 	customErrors()
 	goroutines()
 	channels()
+	channelBuffering()
 }
