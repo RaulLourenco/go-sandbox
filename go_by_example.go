@@ -836,6 +836,21 @@ func channelBuffering() {
 	fmt.Println(<-messages)
 }
 
+func worker(done chan bool) {
+	fmt.Print("working...")
+	time.Sleep(time.Second)
+	fmt.Print("done")
+	
+	done <- true
+}
+
+func channelSynchronization() {
+	done := make(chan bool, 1)
+	go worker(done)
+	
+	<-done
+}
+
 func main() {
 	helloWorld()
 	values()
@@ -867,4 +882,5 @@ func main() {
 	goroutines()
 	channels()
 	channelBuffering()
+	channelSynchronization()
 }
